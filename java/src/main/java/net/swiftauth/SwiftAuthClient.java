@@ -169,6 +169,18 @@ public class SwiftAuthClient {
         return post("/api/client/variables", Map.of("sessionToken", sessionToken));
     }
 
+    // ── License Variables ────────────────────────────────────────────
+
+    public Map<String, Object> getLicenseVariable(String key) throws SwiftAuthException {
+        requireInit();
+        return post("/api/client/license-variable", Map.of("sessionToken", sessionToken, "key", key));
+    }
+
+    public Map<String, Object> getAllLicenseVariables() throws SwiftAuthException {
+        requireInit();
+        return post("/api/client/license-variables", Map.of("sessionToken", sessionToken));
+    }
+
     // ── User Variables ──────────────────────────────────────────────
 
     public Map<String, Object> getUserVariable(String key) throws SwiftAuthException {

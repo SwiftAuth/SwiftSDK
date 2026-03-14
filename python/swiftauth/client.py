@@ -199,6 +199,23 @@ class SwiftAuthClient:
             return [VariableData(key=v["key"], value=v["value"], type=v.get("type", "STRING")) for v in data]
         return []
 
+    # ── License Variables ────────────────────────────────────────────
+
+    def get_license_variable(self, key: str) -> VariableData:
+        self._require_init()
+        data = self._post("/api/client/license-variable", {
+            "sessionToken": self._session_token,
+            "key": key,
+        })
+        return VariableData(key=data["key"], value=data["value"], type=data.get("type", "STRING"))
+
+    def get_all_license_variables(self) -> list[VariableData]:
+        self._require_init()
+        data = self._post("/api/client/license-variables", {"sessionToken": self._session_token})
+        if isinstance(data, list):
+            return [VariableData(key=v["key"], value=v["value"], type=v.get("type", "STRING")) for v in data]
+        return []
+
     # ── User Variables ──────────────────────────────────────────────
 
     def get_user_variable(self, key: str) -> UserVariableData:

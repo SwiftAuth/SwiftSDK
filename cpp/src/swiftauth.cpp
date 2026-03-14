@@ -586,6 +586,27 @@ std::vector<Variable> Client::get_all_variables() {
     return vars;
 }
 
+// ── License Variables ────────────────────────────────────────────────
+
+Variable Client::get_license_variable(const std::string& key) {
+    require_init();
+    auto data = api_post("/api/client/license-variable", json::serialize({
+        {"sessionToken", session_token_}, {"key", key},
+    }));
+    return { json::get_string(data, "key"), json::get_string(data, "value"), json::get_string(data, "type") };
+}
+
+std::vector<Variable> Client::get_all_license_variables() {
+    require_init();
+    auto data = api_post("/api/client/license-variables", json::serialize({{"sessionToken", session_token_}}));
+    std::vector<Variable> vars;
+    auto items = json::split_array(data);
+    for (auto& item : items) {
+        vars.push_back({ json::get_string(item, "key"), json::get_string(item, "value"), json::get_string(item, "type") });
+    }
+    return vars;
+}
+
 UserVariable Client::get_user_variable(const std::string& key) {
     require_init();
     auto data = api_post("/api/client/user-variable", json::serialize({

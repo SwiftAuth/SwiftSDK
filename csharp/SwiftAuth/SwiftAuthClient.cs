@@ -206,6 +206,22 @@ namespace SwiftAuth
             return await PostListAsync<VariableData>("/api/client/variables", payload);
         }
 
+        // ── License Variables ────────────────────────────────────────────
+
+        public async Task<VariableData> GetLicenseVariableAsync(string key)
+        {
+            EnsureInitialized();
+            var payload = new { sessionToken = _sessionToken, key };
+            return await PostAsync<VariableData>("/api/client/license-variable", payload);
+        }
+
+        public async Task<List<VariableData>> GetAllLicenseVariablesAsync()
+        {
+            EnsureInitialized();
+            var payload = new { sessionToken = _sessionToken };
+            return await PostListAsync<VariableData>("/api/client/license-variables", payload);
+        }
+
         // ── User Variables ──────────────────────────────────────────────
 
         public async Task<UserVariableData> GetUserVariableAsync(string key)

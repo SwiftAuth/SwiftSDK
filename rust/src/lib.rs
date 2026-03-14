@@ -231,6 +231,36 @@ impl SwiftAuthClient {
         Ok(vars)
     }
 
+    // ── License Variables ────────────────────────────────────────────
+
+    pub fn get_license_variable(&self, key: &str) -> Result<Variable> {
+        self.require_init()?;
+        let st = self.session_token.as_ref().unwrap();
+        let data = self.post("/api/client/license-variable", json!({ "sessionToken": st, "key": key }))?;
+        Ok(Variable {
+            key: get_str(&data, "key").to_string(),
+            value: get_str(&data, "value").to_string(),
+            var_type: get_str(&data, "type").to_string(),
+        })
+    }
+
+    pub fn get_all_license_variables(&self) -> Result<Vec<Variable>> {
+        self.require_init()?;
+        let st = self.session_token.as_ref().unwrap();
+        let data = self.post("/api/client/license-variables", json!({ "sessionToken": st }))?;
+        let mut vars = Vec::new();
+        if let Value::Array(arr) = data {
+            for item in arr {
+                vars.push(Variable {
+                    key: get_str(&item, "key").to_string(),
+                    value: get_str(&item, "value").to_string(),
+                    var_type: get_str(&item, "type").to_string(),
+                });
+            }
+        }
+        Ok(vars)
+    }
+
     // ── User Variables ──────────────────────────────────────────────
 
     pub fn get_user_variable(&self, key: &str) -> Result<UserVariable> {

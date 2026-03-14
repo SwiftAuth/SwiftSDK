@@ -172,6 +172,22 @@ class SwiftAuthClient(
         return list.map { Variable(key = it.str("key"), value = it.str("value"), type = (it.str("type")).ifEmpty { "STRING" }) }
     }
 
+    // ── License Variables ────────────────────────────────────────────
+
+    fun getLicenseVariable(key: String): Variable {
+        requireInit()
+        val data = post("/api/client/license-variable", mapOf("sessionToken" to sessionToken, "key" to key))
+        return Variable(key = data.str("key"), value = data.str("value"), type = data.str("type").ifEmpty { "STRING" })
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getAllLicenseVariables(): List<Variable> {
+        requireInit()
+        val data = post("/api/client/license-variables", mapOf("sessionToken" to sessionToken))
+        val list = data["_list"] as? List<Map<String, Any?>> ?: return emptyList()
+        return list.map { Variable(key = it.str("key"), value = it.str("value"), type = (it.str("type")).ifEmpty { "STRING" }) }
+    }
+
     // ── User Variables ──────────────────────────────────────────────
 
     fun getUserVariable(key: String): UserVariable {

@@ -180,6 +180,21 @@ public class SwiftAuthClient {
         return list.map { Variable(key: $0["key"] as? String ?? "", value: $0["value"] as? String ?? "", type: $0["type"] as? String ?? "STRING") }
     }
 
+    // MARK: - License Variables
+
+    public func getLicenseVariable(key: String) throws -> Variable {
+        try requireInit()
+        let data = try post(path: "/api/client/license-variable", payload: ["sessionToken": sessionToken!, "key": key])
+        return Variable(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "", type: data["type"] as? String ?? "STRING")
+    }
+
+    public func getAllLicenseVariables() throws -> [Variable] {
+        try requireInit()
+        let result = try postRaw(path: "/api/client/license-variables", payload: ["sessionToken": sessionToken!])
+        guard let list = result as? [[String: Any]] else { return [] }
+        return list.map { Variable(key: $0["key"] as? String ?? "", value: $0["value"] as? String ?? "", type: $0["type"] as? String ?? "STRING") }
+    }
+
     // MARK: - User Variables
 
     public func getUserVariable(key: String) throws -> UserVariable {

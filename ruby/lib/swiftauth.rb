@@ -138,6 +138,21 @@ module SwiftAuth
       data.map { |v| Variable.new(key: v["key"], value: v["value"], type: v["type"] || "STRING") }
     end
 
+    # ── License Variables ────────────────────────────────────────────
+
+    def get_license_variable(key)
+      require_init!
+      data = post("/api/client/license-variable", { sessionToken: @session_token, key: key })
+      Variable.new(key: data["key"], value: data["value"], type: data["type"] || "STRING")
+    end
+
+    def get_all_license_variables
+      require_init!
+      data = post("/api/client/license-variables", { sessionToken: @session_token })
+      return [] unless data.is_a?(Array)
+      data.map { |v| Variable.new(key: v["key"], value: v["value"], type: v["type"] || "STRING") }
+    end
+
     # ── User Variables ──────────────────────────────────────────────
 
     def get_user_variable(key)

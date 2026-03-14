@@ -1,5 +1,7 @@
 # SwiftAuth Official SDKs
 
+**GitHub:** [https://github.com/SwiftAuth/SwiftSDK](https://github.com/SwiftAuth/SwiftSDK)
+
 Integrate SwiftAuth authentication, licensing, and real-time features into your application in minutes. Each SDK covers the full client API with WebSocket support.
 
 ```

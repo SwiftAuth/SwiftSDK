@@ -160,6 +160,8 @@ public:
     // ── Variables ───────────────────────────────────────────────────
     Variable              get_variable(const std::string& key);
     std::vector<Variable> get_all_variables();
+    Variable              get_license_variable(const std::string& key);
+    std::vector<Variable> get_all_license_variables();
     UserVariable              get_user_variable(const std::string& key);
     std::vector<UserVariable> get_all_user_variables();
     UserVariable              set_user_variable(const std::string& key, const std::string& value);

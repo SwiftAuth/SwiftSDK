@@ -159,6 +159,20 @@ class SwiftAuthClient
         return $this->post('/api/client/variables', ['sessionToken' => $this->sessionToken]);
     }
 
+    // ── License Variables ───────────────────────────────────────────
+
+    public function getLicenseVariable(string $key): array
+    {
+        $this->requireInit();
+        return $this->post('/api/client/license-variable', ['sessionToken' => $this->sessionToken, 'key' => $key]);
+    }
+
+    public function getAllLicenseVariables(): array
+    {
+        $this->requireInit();
+        return $this->post('/api/client/license-variables', ['sessionToken' => $this->sessionToken]);
+    }
+
     // ── User Variables ──────────────────────────────────────────────
 
     public function getUserVariable(string $key): array

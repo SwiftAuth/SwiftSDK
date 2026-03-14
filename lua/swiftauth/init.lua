@@ -179,6 +179,23 @@ function SwiftAuth:get_all_variables()
     return self:_post("/api/client/variables", { sessionToken = self._session_token })
 end
 
+-- ── License Variables ────────────────────────────────────────────
+
+--- Get a single license-scoped variable.
+--- @param key string
+--- @return table Variable data {key, value, type}
+function SwiftAuth:get_license_variable(key)
+    self:_require_init()
+    return self:_post("/api/client/license-variable", { sessionToken = self._session_token, key = key })
+end
+
+--- Get all license-scoped variables.
+--- @return table List of variables
+function SwiftAuth:get_all_license_variables()
+    self:_require_init()
+    return self:_post("/api/client/license-variables", { sessionToken = self._session_token })
+end
+
 -- ── User Variables ──────────────────────────────────────────────
 
 --- Get a user-scoped variable.

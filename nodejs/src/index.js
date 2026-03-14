@@ -163,6 +163,18 @@ class SwiftAuthClient extends EventEmitter {
         return this.#post("/api/client/variables", { sessionToken: this.#sessionToken });
     }
 
+    // ── License Variables ───────────────────────────────────────────
+
+    async getLicenseVariable(key) {
+        this.#requireInit();
+        return this.#post("/api/client/license-variable", { sessionToken: this.#sessionToken, key });
+    }
+
+    async getAllLicenseVariables() {
+        this.#requireInit();
+        return this.#post("/api/client/license-variables", { sessionToken: this.#sessionToken });
+    }
+
     // ── User Variables ──────────────────────────────────────────────
 
     async getUserVariable(key) {

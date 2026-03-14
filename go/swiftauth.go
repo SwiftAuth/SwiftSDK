@@ -264,6 +264,35 @@ func (c *Client) GetAllVariables() ([]Variable, error) {
 	return parseVariables(data), nil
 }
 
+// GetLicenseVariable fetches a single license-scoped variable.
+func (c *Client) GetLicenseVariable(key string) (*Variable, error) {
+	if err := c.requireInit(); err != nil {
+		return nil, err
+	}
+	data, err := c.post("/api/client/license-variable", map[string]any{
+		"sessionToken": c.sessionToken,
+		"key":          key,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &Variable{Key: str(data, "key"), Value: str(data, "value"), Type: str(data, "type")}, nil
+}
+
+// GetAllLicenseVariables fetches all license-scoped variables.
+func (c *Client) GetAllLicenseVariables() ([]Variable, error) {
+	if err := c.requireInit(); err != nil {
+		return nil, err
+	}
+	data, err := c.post("/api/client/license-variables", map[string]any{
+		"sessionToken": c.sessionToken,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return parseVariables(data), nil
+}
+
 // GetUserVariable fetches a user-scoped variable.
 func (c *Client) GetUserVariable(key string) (*UserVariable, error) {
 	if err := c.requireInit(); err != nil {
