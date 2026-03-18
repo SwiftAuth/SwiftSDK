@@ -527,7 +527,7 @@ namespace SwiftAuth
             if (root.TryGetProperty("data", out var dataProp))
                 return JsonSerializer.Deserialize<T>(dataProp.GetRawText(), _jsonOpts);
 
-            return default;
+            throw new SwiftAuthException("EMPTY_RESPONSE", "Server returned success but no data payload.");
         }
 
         private static List<T> ParseListResponse<T>(string body)

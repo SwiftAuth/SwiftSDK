@@ -33,6 +33,8 @@ namespace SwiftAuth.Example
                 // ── Step 1: Initialize ──────────────────────────────
                 Print("Initializing", "Connecting to SwiftAuth...");
                 var init = await client.InitAsync();
+                if (client.App == null)
+                    throw new Exception("SDK returned null data — Init succeeded but App info is missing");
                 PrintSuccess($"Connected to {client.App.Name} v{client.App.Version}");
                 PrintInfo($"Session Token: {Truncate(init.SessionToken, 20)}");
                 PrintInfo($"HWID Lock: {client.App.LockHwid}  |  IP Lock: {client.App.LockIp}  |  Anti-Debug: {client.App.AntiDebug}");
@@ -133,6 +135,10 @@ namespace SwiftAuth.Example
             catch (SwiftAuthException ex)
             {
                 PrintError($"[{ex.Code}] {ex.Message}");
+            }
+            catch (NullReferenceException)
+            {
+                PrintError("Received unexpected response from server");
             }
             catch (Exception ex)
             {
