@@ -182,6 +182,16 @@ class SwiftAuthClient:
             "licenseKey": license_key,
         })
 
+    # ── License Check ────────────────────────────────────────────────
+
+    def check_license(self, license_key: str) -> dict:
+        """Check if a license key is valid/banned/expired without activating it."""
+        self._require_init()
+        return self._post("/api/client/check-license", {
+            "sessionToken": self._session_token,
+            "licenseKey": license_key,
+        })
+
     # ── Variables ───────────────────────────────────────────────────
 
     def get_variable(self, key: str) -> VariableData:
@@ -424,7 +434,12 @@ class SwiftAuthClient:
         try:
             body = resp.json()
         except ValueError:
-            raise SwiftAuthError("PARSE_ERROR", "Invalid response from server")
+            preview = resp.text[:200] + "..." if len(resp.text) > 200 else resp.text
+            raise SwiftAuthError(
+                "PARSE_ERROR",
+                f"Invalid JSON response from server. This usually means the request hit a non-API endpoint "
+                f"(e.g. Cloudflare, reverse proxy, or wrong base URL). Response preview: {preview}",
+            )
 
         if not body.get("success", False):
             error = body.get("error", {})

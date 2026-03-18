@@ -171,6 +171,15 @@ namespace SwiftAuth
             return result;
         }
 
+        // ── License Check ───────────────────────────────────────────────
+
+        public async Task<LicenseCheckResponse> CheckLicenseAsync(string licenseKey)
+        {
+            EnsureInitialized();
+            var payload = new { sessionToken = _sessionToken, licenseKey };
+            return await PostAsync<LicenseCheckResponse>("/api/client/check-license", payload);
+        }
+
         // ── Token Validation ────────────────────────────────────────────
 
         public async Task<TokenResponse> ValidateTokenAsync(string token)
@@ -495,7 +504,11 @@ namespace SwiftAuth
         {
             JsonDocument doc;
             try { doc = JsonDocument.Parse(body); }
-            catch (JsonException) { throw new SwiftAuthException("PARSE_ERROR", "Invalid JSON response from server"); }
+            catch (JsonException)
+            {
+                var preview = body?.Length > 200 ? body.Substring(0, 200) + "..." : body ?? "(empty)";
+                throw new SwiftAuthException("PARSE_ERROR", $"Invalid JSON response from server. This usually means the request hit a non-API endpoint (e.g. Cloudflare, reverse proxy, or wrong base URL). Response preview: {preview}");
+            }
             using var _ = doc;
             var root = doc.RootElement;
 
@@ -521,7 +534,11 @@ namespace SwiftAuth
         {
             JsonDocument doc;
             try { doc = JsonDocument.Parse(body); }
-            catch (JsonException) { throw new SwiftAuthException("PARSE_ERROR", "Invalid JSON response from server"); }
+            catch (JsonException)
+            {
+                var preview = body?.Length > 200 ? body.Substring(0, 200) + "..." : body ?? "(empty)";
+                throw new SwiftAuthException("PARSE_ERROR", $"Invalid JSON response from server. This usually means the request hit a non-API endpoint (e.g. Cloudflare, reverse proxy, or wrong base URL). Response preview: {preview}");
+            }
             using var _ = doc;
             var root = doc.RootElement;
 
@@ -547,7 +564,11 @@ namespace SwiftAuth
         {
             JsonDocument doc;
             try { doc = JsonDocument.Parse(body); }
-            catch (JsonException) { throw new SwiftAuthException("PARSE_ERROR", "Invalid JSON response from server"); }
+            catch (JsonException)
+            {
+                var preview = body?.Length > 200 ? body.Substring(0, 200) + "..." : body ?? "(empty)";
+                throw new SwiftAuthException("PARSE_ERROR", $"Invalid JSON response from server. This usually means the request hit a non-API endpoint (e.g. Cloudflare, reverse proxy, or wrong base URL). Response preview: {preview}");
+            }
             using var _ = doc;
             var root = doc.RootElement;
 
@@ -775,6 +796,27 @@ namespace SwiftAuth
         [JsonPropertyName("valid")]     public bool Valid { get; set; }
         [JsonPropertyName("expiresAt")] public string ExpiresAt { get; set; }
         [JsonPropertyName("username")]  public string Username { get; set; }
+    }
+
+    public class LicenseCheckResponse
+    {
+        [JsonPropertyName("valid")]   public bool Valid { get; set; }
+        [JsonPropertyName("exists")]  public bool Exists { get; set; }
+        [JsonPropertyName("banned")]  public bool Banned { get; set; }
+        [JsonPropertyName("enabled")] public bool Enabled { get; set; }
+        [JsonPropertyName("issues")]  public List<string> Issues { get; set; }
+        [JsonPropertyName("reason")]  public string Reason { get; set; }
+        [JsonPropertyName("license")] public LicenseCheckInfo License { get; set; }
+    }
+
+    public class LicenseCheckInfo
+    {
+        [JsonPropertyName("level")]     public int Level { get; set; }
+        [JsonPropertyName("duration")]  public int? Duration { get; set; }
+        [JsonPropertyName("expiresAt")] public string ExpiresAt { get; set; }
+        [JsonPropertyName("usedCount")] public int UsedCount { get; set; }
+        [JsonPropertyName("maxUses")]   public int MaxUses { get; set; }
+        [JsonPropertyName("usedBy")]    public string UsedBy { get; set; }
     }
 
     public class UserInfoResponse

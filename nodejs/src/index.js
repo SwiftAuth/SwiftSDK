@@ -151,6 +151,16 @@ class SwiftAuthClient extends EventEmitter {
         });
     }
 
+    // ── License Check ──────────────────────────────────────────────
+
+    async checkLicense(licenseKey) {
+        this.#requireInit();
+        return this.#post("/api/client/check-license", {
+            sessionToken: this.#sessionToken,
+            licenseKey,
+        });
+    }
+
     // ── Variables ───────────────────────────────────────────────────
 
     async getVariable(key) {
@@ -385,7 +395,9 @@ class SwiftAuthClient extends EventEmitter {
                         }
                         resolve(json.data !== undefined ? json.data : json.message);
                     } catch (e) {
-                        reject(new SwiftAuthError("PARSE_ERROR", "Invalid server response"));
+                        const raw = Buffer.concat(chunks).toString();
+                        const preview = raw.length > 200 ? raw.slice(0, 200) + "..." : raw;
+                        reject(new SwiftAuthError("PARSE_ERROR", `Invalid JSON response from server. This usually means the request hit a non-API endpoint (e.g. Cloudflare, reverse proxy, or wrong base URL). Response preview: ${preview}`));
                     }
                 });
             });
