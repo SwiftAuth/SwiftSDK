@@ -324,7 +324,18 @@ namespace SwiftAuth
         {
             EnsureInitialized();
             var payload = new { sessionToken = _sessionToken };
-            return await PostAsync<UserInfoResponse>("/api/client/user", payload);
+            var result = await PostAsync<UserInfoResponse>("/api/client/user", payload);
+            CurrentUser = new UserData
+            {
+                Key = result.Key,
+                Username = result.Username,
+                Email = result.Email,
+                Level = result.Level,
+                ExpiresAt = result.ExpiresAt,
+                AvatarUrl = result.AvatarUrl,
+                DiscordId = result.DiscordId,
+            };
+            return result;
         }
 
         public async Task ChangePasswordAsync(string currentPassword, string newPassword)
@@ -692,6 +703,8 @@ namespace SwiftAuth
         public string Email { get; set; }
         public int Level { get; set; }
         public string ExpiresAt { get; set; }
+        public string AvatarUrl { get; set; }
+        public string DiscordId { get; set; }
     }
 
     public class InitResponse
@@ -829,6 +842,8 @@ namespace SwiftAuth
         [JsonPropertyName("metadata")]    public JsonElement? Metadata { get; set; }
         [JsonPropertyName("createdAt")]   public string CreatedAt { get; set; }
         [JsonPropertyName("lastLoginAt")] public string LastLoginAt { get; set; }
+        [JsonPropertyName("avatarUrl")]   public string AvatarUrl { get; set; }
+        [JsonPropertyName("discordId")]   public string DiscordId { get; set; }
     }
 
     // ── Multi-Layer File Decryption ─────────────────────────────────────

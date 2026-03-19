@@ -17,7 +17,7 @@ module SwiftAuth
   end
 
   AppInfo = Struct.new(:name, :version, :anti_debug, :anti_vm, :lock_hwid, :lock_ip, :lock_pc_name, keyword_init: true)
-  UserData = Struct.new(:key, :username, :email, :level, :expires_at, :metadata, keyword_init: true)
+  UserData = Struct.new(:key, :username, :email, :level, :expires_at, :metadata, :avatar_url, :discord_id, keyword_init: true)
   Variable = Struct.new(:key, :value, :type, keyword_init: true)
   UserVariable = Struct.new(:key, :value, keyword_init: true)
 
@@ -231,7 +231,9 @@ module SwiftAuth
 
     def get_user
       require_init!
-      post("/api/client/user", { sessionToken: @session_token })
+      data = post("/api/client/user", { sessionToken: @session_token })
+      @user = parse_user(data)
+      data
     end
 
     def change_password(current_password, new_password)
@@ -304,6 +306,8 @@ module SwiftAuth
         level: data["level"] || 0,
         expires_at: data["expiresAt"],
         metadata: data["metadata"],
+        avatar_url: data["avatarUrl"],
+        discord_id: data["discordId"],
       )
     end
 

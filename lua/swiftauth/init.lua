@@ -264,7 +264,9 @@ end
 --- @return table User data
 function SwiftAuth:get_user()
     self:_require_init()
-    return self:_post("/api/client/user", { sessionToken = self._session_token })
+    local data = self:_post("/api/client/user", { sessionToken = self._session_token })
+    self.user = self:_parse_user(data)
+    return data
 end
 
 --- Change the current user's password.
@@ -412,6 +414,8 @@ function SwiftAuth:_parse_user(data)
         level = data.level or 0,
         expires_at = data.expiresAt,
         metadata = data.metadata,
+        avatar_url = data.avatarUrl,
+        discord_id = data.discordId,
     }
 end
 

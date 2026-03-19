@@ -21,6 +21,8 @@ class UserData:
     level: int = 0
     expires_at: Optional[str] = None
     metadata: Optional[dict] = None
+    avatar_url: Optional[str] = None
+    discord_id: Optional[str] = None
 
 
 @dataclass

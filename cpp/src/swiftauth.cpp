@@ -701,13 +701,16 @@ void Client::end_session() {
 UserData Client::get_user() {
     require_init();
     auto data = api_post("/api/client/user", json::serialize({{"sessionToken", session_token_}}));
-    return {
+    user_ = {
         json::get_string(data, "key"),
         json::get_string(data, "username"),
         json::get_string(data, "email"),
         json::get_int(data, "level"),
         json::get_string(data, "expiresAt"),
+        json::get_string(data, "avatarUrl"),
+        json::get_string(data, "discordId"),
     };
+    return user_;
 }
 
 void Client::change_password(const std::string& current_pw, const std::string& new_pw) {

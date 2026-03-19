@@ -47,6 +47,8 @@ struct UserData {
     std::string email;
     int         level = 0;
     std::string expires_at;
+    std::string avatar_url;
+    std::string discord_id;
 };
 
 struct Variable {

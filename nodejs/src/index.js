@@ -253,7 +253,18 @@ class SwiftAuthClient extends EventEmitter {
 
     async getUser() {
         this.#requireInit();
-        return this.#post("/api/client/user", { sessionToken: this.#sessionToken });
+        const data = await this.#post("/api/client/user", { sessionToken: this.#sessionToken });
+        this.user = {
+            key: data.key,
+            username: data.username,
+            email: data.email,
+            level: data.level,
+            expiresAt: data.expiresAt,
+            metadata: data.metadata,
+            avatarUrl: data.avatarUrl,
+            discordId: data.discordId,
+        };
+        return data;
     }
 
     async changePassword(currentPassword, newPassword) {

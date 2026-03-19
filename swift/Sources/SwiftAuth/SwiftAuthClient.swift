@@ -35,6 +35,8 @@ public struct UserData {
     public let level: Int
     public let expiresAt: String?
     public let metadata: Any?
+    public let avatarUrl: String?
+    public let discordId: String?
 }
 
 public struct Variable {
@@ -292,7 +294,9 @@ public class SwiftAuthClient {
 
     public func getUser() throws -> [String: Any] {
         try requireInit()
-        return try post(path: "/api/client/user", payload: ["sessionToken": sessionToken!])
+        let data = try post(path: "/api/client/user", payload: ["sessionToken": sessionToken!])
+        user = Self.parseUser(data)
+        return data
     }
 
     public func changePassword(currentPassword: String, newPassword: String) throws {
@@ -394,7 +398,9 @@ public class SwiftAuthClient {
             email: data["email"] as? String ?? "",
             level: data["level"] as? Int ?? 0,
             expiresAt: data["expiresAt"] as? String,
-            metadata: data["metadata"]
+            metadata: data["metadata"],
+            avatarUrl: data["avatarUrl"] as? String,
+            discordId: data["discordId"] as? String
         )
     }
 

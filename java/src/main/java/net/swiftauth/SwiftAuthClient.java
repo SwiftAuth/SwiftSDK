@@ -265,7 +265,9 @@ public class SwiftAuthClient {
 
     public Map<String, Object> getUserInfo() throws SwiftAuthException {
         requireInit();
-        return post("/api/client/user", Map.of("sessionToken", sessionToken));
+        var data = post("/api/client/user", Map.of("sessionToken", sessionToken));
+        user = parseUser(data);
+        return data;
     }
 
     public void changePassword(String currentPassword, String newPassword) throws SwiftAuthException {
@@ -450,7 +452,9 @@ public class SwiftAuthClient {
             getString(data, "email"),
             getInt(data, "level"),
             getString(data, "expiresAt"),
-            data.get("metadata")
+            data.get("metadata"),
+            getString(data, "avatarUrl"),
+            getString(data, "discordId")
         );
     }
 
@@ -727,5 +731,5 @@ public class SwiftAuthClient {
     // ── Data Classes ────────────────────────────────────────────────
 
     public record AppInfo(String name, String version, boolean antiDebug, boolean antiVM, boolean lockHwid, boolean lockIp, boolean lockPcName) {}
-    public record UserData(String key, String username, String email, int level, String expiresAt, Object metadata) {}
+    public record UserData(String key, String username, String email, int level, String expiresAt, Object metadata, String avatarUrl, String discordId) {}
 }

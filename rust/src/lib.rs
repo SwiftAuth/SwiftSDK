@@ -45,6 +45,8 @@ pub struct UserData {
     pub level: i64,
     pub expires_at: Option<String>,
     pub metadata: Option<Value>,
+    pub avatar_url: Option<String>,
+    pub discord_id: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -371,10 +373,12 @@ impl SwiftAuthClient {
 
     // ── User Info ───────────────────────────────────────────────────
 
-    pub fn get_user(&self) -> Result<Value> {
+    pub fn get_user(&mut self) -> Result<Value> {
         self.require_init()?;
-        let st = self.session_token.as_ref().unwrap();
-        self.post("/api/client/user", json!({ "sessionToken": st }))
+        let st = self.session_token.as_ref().unwrap().clone();
+        let data = self.post("/api/client/user", json!({ "sessionToken": st }))?;
+        self.user = Some(parse_user(&data));
+        Ok(data)
     }
 
     pub fn change_password(&self, current_password: &str, new_password: &str) -> Result<()> {
@@ -483,6 +487,8 @@ fn parse_user(data: &Value) -> UserData {
         level: data.get("level").and_then(|v| v.as_i64()).unwrap_or(0),
         expires_at: data.get("expiresAt").and_then(|v| v.as_str()).map(String::from),
         metadata: data.get("metadata").cloned(),
+        avatar_url: data.get("avatarUrl").and_then(|v| v.as_str()).map(String::from),
+        discord_id: data.get("discordId").and_then(|v| v.as_str()).map(String::from),
     }
 }
 

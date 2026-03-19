@@ -52,6 +52,8 @@ type UserData struct {
 	Level     int    `json:"level"`
 	ExpiresAt string `json:"expiresAt"`
 	Metadata  any    `json:"metadata"`
+	AvatarURL string `json:"avatarUrl"`
+	DiscordID string `json:"discordId"`
 }
 
 // Variable represents an app variable.
@@ -430,9 +432,14 @@ func (c *Client) GetUser() (map[string]any, error) {
 	if err := c.requireInit(); err != nil {
 		return nil, err
 	}
-	return c.post("/api/client/user", map[string]any{
+	data, err := c.post("/api/client/user", map[string]any{
 		"sessionToken": c.sessionToken,
 	})
+	if err != nil {
+		return nil, err
+	}
+	c.User = parseUser(data)
+	return data, nil
 }
 
 // ChangePassword changes the current user's password.
@@ -672,6 +679,8 @@ func parseUser(data map[string]any) *UserData {
 		Email:     str(data, "email"),
 		ExpiresAt: str(data, "expiresAt"),
 		Metadata:  data["metadata"],
+		AvatarURL: str(data, "avatarUrl"),
+		DiscordID: str(data, "discordId"),
 	}
 	if v, ok := data["level"].(float64); ok {
 		u.Level = int(v)

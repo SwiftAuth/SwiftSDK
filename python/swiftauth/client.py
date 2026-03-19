@@ -319,7 +319,18 @@ class SwiftAuthClient:
 
     def get_user(self) -> dict:
         self._require_init()
-        return self._post("/api/client/user", {"sessionToken": self._session_token})
+        data = self._post("/api/client/user", {"sessionToken": self._session_token})
+        self.user = UserData(
+            key=data.get("key", ""),
+            username=data.get("username", ""),
+            email=data.get("email", ""),
+            level=data.get("level", 0),
+            expires_at=data.get("expiresAt"),
+            metadata=data.get("metadata"),
+            avatar_url=data.get("avatarUrl"),
+            discord_id=data.get("discordId"),
+        )
+        return data
 
     def change_password(self, current_password: str, new_password: str) -> None:
         self._require_init()

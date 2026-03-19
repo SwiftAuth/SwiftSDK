@@ -275,7 +275,9 @@ class SwiftAuthClient
     public function getUser(): array
     {
         $this->requireInit();
-        return $this->post('/api/client/user', ['sessionToken' => $this->sessionToken]);
+        $data = $this->post('/api/client/user', ['sessionToken' => $this->sessionToken]);
+        $this->user = $this->parseUser($data);
+        return $data;
     }
 
     public function changePassword(string $currentPassword, string $newPassword): void
@@ -372,6 +374,8 @@ class SwiftAuthClient
             'level' => $data['level'] ?? 0,
             'expiresAt' => $data['expiresAt'] ?? null,
             'metadata' => $data['metadata'] ?? null,
+            'avatarUrl' => $data['avatarUrl'] ?? null,
+            'discordId' => $data['discordId'] ?? null,
         ];
     }
 

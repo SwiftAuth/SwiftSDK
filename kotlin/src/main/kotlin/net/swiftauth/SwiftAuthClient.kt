@@ -39,6 +39,8 @@ data class UserData(
     val level: Int,
     val expiresAt: String?,
     val metadata: Any?,
+    val avatarUrl: String? = null,
+    val discordId: String? = null,
 )
 
 data class Variable(val key: String, val value: String, val type: String)
@@ -270,7 +272,9 @@ class SwiftAuthClient(
 
     fun getUser(): Map<String, Any?> {
         requireInit()
-        return post("/api/client/user", mapOf("sessionToken" to sessionToken))
+        val data = post("/api/client/user", mapOf("sessionToken" to sessionToken))
+        user = parseUser(data)
+        return data
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
@@ -416,6 +420,8 @@ class SwiftAuthClient(
         level = (data["level"] as? Number)?.toInt() ?: 0,
         expiresAt = data["expiresAt"] as? String,
         metadata = data["metadata"],
+        avatarUrl = data["avatarUrl"] as? String,
+        discordId = data["discordId"] as? String,
     )
 
     companion object {
